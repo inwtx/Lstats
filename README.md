@@ -1,4 +1,4 @@
-# Lstats Remailer Dashboard
+# Lstats - Remailer Dashboard
 
 This script can be used by remailer sysops to monitor their server and remailer performance.  
 Copy the script code below into a file called Lstats.sh and make it executable (sudo chmod 755 Lstats.sh).  
