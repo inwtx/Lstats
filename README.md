@@ -15,13 +15,14 @@ Then execute it with a cron as explained in at the top of the script code.
 #                                                                        #
 # The following script can be used to monitor a remailer servers.        #
 # Several statistics concerning the server and mixmaster are displayed.  #
-# The script is executed as: servstats.sh <remailer short name>          #
-# The script MUST be executed every 5 minutes. The script must not be    #
-# execute at the same time with former Lstats scripts or the results     #
-# will be unpredictable.                                                 #
+# The script is executed as: servstats.sh <remailer-name>                #
+# The lstats.sh can be executed MUST be executed every 1 minute and      #
+# must executed at 0000 hours to reset the pool count display to zero.   #
+# The script must not be execute at the same time with former Lstats     #
+# scripts or the results will be unpredictable.                          #
 #                                                                        #
 # Retrieve stastics for server web page - cron job                       #
-# */5 * * * * /path/to/lstats.sh <remailer short name>                   #
+# */1 * * * * /path/to/lstats.sh <remailer short name>                   #
 #                                                                        #
 #------------------------------------------------------------------------#
 
@@ -40,7 +41,7 @@ erroremail=""
 
 
 tempdisp="yes"
-dostats="y"
+dostats="n"
 expdwarn=30
 filePath=${0%/*}  # current file path
 stathighlight="#ff1493"
@@ -250,9 +251,7 @@ echo "<br>" >> $webpgpath/$webpgnm
 
 ## pool count
 
-#$filePath/poolcount.sh
-
-#//   <<<--------test-------------test-------------test   11-08-2020 12:02
+##$filePath/poolcount.sh
         if [ ! -s $filePath/savepool.txt ];  then  # create file first time
             echo "0" > $filePath/savetodaypoolcnt.txt
             echo "0" >> $filePath/savetodaypoolcnt.txt
@@ -286,7 +285,6 @@ echo "<br>" >> $webpgpath/$webpgnm
         echo $savepriorpoolcnt >> $filePath/savetodaypoolcnt.txt                  # save the pool cnt for next chk
 
         rm $filePath/temppool.txt
-#//   <<<--------test-------------test-------------test   11-08-2020 12:02
 
 echo "pool count:&nbsp;" > $filePath/templ.txt
 find $mixpath/pool -type f | wc -l >> $filePath/templ.txt
@@ -538,7 +536,7 @@ if [[ $(date +"%M") = "00" ]] || \
    wget  --no-check-certificate --timeout=15  -t 1 zip2.in/echolot/mlist.txt -O $filePath/zip2.txt
    echo $(date) > $filePath/statdate.txt
 fi
-#t5
+
 savdate=$(< $filePath/statdate.txt)
 grep "%"  $filePath/zip2.txt | colrm 16 28 > $filePath/astats.txt
 sed -i 's/ /\&nbsp;/g' $filePath/astats.txt
@@ -557,7 +555,6 @@ echo "</font></td></tr></table>" >> $webpgpath/$webpgnm
 echo "</td><td>" >> $webpgpath/$webpgnm
 
 fi
-
 
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
 <font face=\"Verdana\" size=$fontsz><b>Remailer Statistics (apricot)</b></font></td></tr>
