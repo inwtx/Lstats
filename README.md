@@ -20,6 +20,8 @@ Then execute it with a cron as explained in at the top of the script code.
 # must executed at 0000 hours to reset the pool count display to zero.   #
 # The script must not be execute at the same time with former Lstats     #
 # scripts or the results will be unpredictable.                          #
+# If you want the MTD bandwidth to show in the totals, you must run      #
+# vnstat on your system.                                                 #
 #                                                                        #
 # Retrieve stastics for server web page - cron job                       #
 # */1 * * * * /path/to/lstats.sh <remailer short name>                   #
