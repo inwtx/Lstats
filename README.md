@@ -1,7 +1,7 @@
 # Lstats
 
 This script can be used by remailer sysops to monitor their server and remailer performance.  
-Copy the script code below into a file called Lstats.sh and make it executable (csudo chmod 755 Lstats.sh).  
+Copy the script code below into a file called Lstats.sh and make it executable (sudo chmod 755 Lstats.sh).  
 Then execute it with a cron as explained in at the top of the script code.  
   
   
