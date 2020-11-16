@@ -16,7 +16,7 @@ The output can be accessed by: yourDN/Lstats.html
 #                                                                        #
 # The following script can be used to monitor a remailer servers.        #
 # Several statistics concerning the server and mixmaster are displayed.  #
-# The script is executed as: servstats.sh <remailer-name>                #
+# The script is executed as: Lstats.sh <remailer-name>                   #
 # The lstats.sh can be executed MUST be executed every 1 minute and      #
 # must executed at 0000 hours to reset the pool count display to zero.   #
 # The script must not be execute at the same time with former Lstats     #
@@ -25,7 +25,7 @@ The output can be accessed by: yourDN/Lstats.html
 # vnstat on your system.                                                 #
 #                                                                        #
 # Retrieve stastics for server web page - cron job                       #
-# */1 * * * * /path/to/lstats.sh <remailer short name>                   #
+# */1 * * * * /path/to/Lstats.sh <remailer short name>                   #
 #                                                                        #
 #------------------------------------------------------------------------#
 
