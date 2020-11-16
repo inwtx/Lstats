@@ -9,6 +9,8 @@ The output can be accessed by: yourDN/Lstats.html
 ```
 #!/bin/bash
 #
+# Lstats v1.1
+#
 # Script to build server statistics Lstats.html
 #
 #------------------------------------------------------------------------#
