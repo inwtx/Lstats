@@ -345,13 +345,6 @@ if [ -e $filePath/poolcount.sh ] && [[ $(cat $filePath/savetodaypoolcnt.txt | wc
 fi
 ## pool today and yesterday end
 
-### mbox count
-#if [[ $(wc -l /etc/mbox | awk '{print $1}') -gt 0 ]]; then  # line cnt > 0
-#   echo "<font color=FF0000><b>mbox count:&nbsp; $(wc -l /etc/mbox | awk '{print $1}')<br></b></font>" >> $webpgpath/$webpgnm
-#   else
-#   echo "mbox count:&nbsp; 0<br>" >> $webpgpath/$webpgnm
-#   fi
-
 ## error count
 if [[ $(grep -c 'Error:' $mixpath/error.log) -ne 0 ]]; then
    echo "<font color=FF0000><b>error count: $(grep -c 'Error:' $mixpath/error.log)<br></b></font>" >> $webpgpath/$webpgnm
