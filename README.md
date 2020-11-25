@@ -9,7 +9,7 @@ The output can be accessed by: yourDN/Lstats.html
 ```
 #!/bin/bash
 #
-# Lstats v1.2
+# Lstats v1.3
 #
 # Script to build remailer server statistics Lstats.html
 #
