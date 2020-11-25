@@ -71,6 +71,7 @@ MachineRogueTableWidth=1112
 MixMiscRemailerTableWidth=870
 
 
+
 ##'------------------------'
 ## BEGIN poolcount function
 ##'------------------------'
@@ -79,35 +80,33 @@ function poolcount(){      #count pool for day
             echo "0" > $filePath/savetodaypoolcnt.txt
             echo "0" >> $filePath/savetodaypoolcnt.txt
             echo "" > $filePath/savepool.txt
-            exit 0
+            else
+            if [ $(date +"%H:%M") = "00:00" ]; then  # reset at midnight
+               savetodaypoolcnt=$(head -n 1 $filePath/savetodaypoolcnt.txt)   # save previous days count
+               echo "0" > $filePath/savetodaypoolcnt.txt                      # zero new days count
+               echo "$savetodaypoolcnt" >> $filePath/savetodaypoolcnt.txt     # save previous days count
+               savetodaypoolcnt=0                                             # zero out todays bucket
+               echo "$(ls $yamnpath/pool/)" > $filePath/savepool.txt           # save current pool at BOD for comparison
+               else
+               savetodaypoolcnt=$(head -n 1 $filePath/savetodaypoolcnt.txt)
+               savepriorpoolcnt=$(sed -n 2p $filePath/savetodaypoolcnt.txt)
+               echo "$(ls $yamnpath/pool/)" > $filePath/temppool.txt              # get current pool in seq list
+
+               while read line ; do
+                  if grep $line $filePath/savepool.txt ; then  # is this message in savepool?
+                     continue                                                 # yes
+                     else
+                    ((savetodaypoolcnt++))                                   # found a new message
+                    echo $line >> $filePath/savepool.txt                     # save the message file name for future ref
+                  fi
+               done<$filePath/temppool.txt                                       # read file line by line
+
+               echo $savetodaypoolcnt > $filePath/savetodaypoolcnt.txt           # save the pool cnt for next chk
+               echo $savepriorpoolcnt >> $filePath/savetodaypoolcnt.txt          # save the pool cnt for next chk
+
+               rm $filePath/temppool.txt
+            fi
         fi
-
-        if [ $(date +"%H:%M") = "00:00" ]; then  # reset at midnight
-           savetodaypoolcnt=$(head -n 1 $filePath/savetodaypoolcnt.txt)   # save previous days count
-           echo "0" > $filePath/savetodaypoolcnt.txt                      # zero new days count
-           echo "$savetodaypoolcnt" >> $filePath/savetodaypoolcnt.txt     # save previous days count
-           savetodaypoolcnt=0                                             # zero out todays bucket
-           echo "$(ls $yamnpath/pool/)" > $filePath/savepool.txt           # save current pool at BOD for comparison
-           exit 0
-        fi
-
-        savetodaypoolcnt=$(head -n 1 $filePath/savetodaypoolcnt.txt)
-        savepriorpoolcnt=$(sed -n 2p $filePath/savetodaypoolcnt.txt)
-        echo "$(ls $yamnpath/pool/)" > $filePath/temppool.txt              # get current pool in seq list
-
-        while read line ; do
-           if grep $line $filePath/savepool.txt ; then  # is this message in savepool?
-                 continue                                                 # yes
-                 else
-                 ((savetodaypoolcnt++))                                   # found a new message
-                 echo $line >> $filePath/savepool.txt                     # save the message file name for future ref
-           fi
-        done<$filePath/temppool.txt                                       # read file line by line
-
-        echo $savetodaypoolcnt > $filePath/savetodaypoolcnt.txt           # save the pool cnt for next chk
-        echo $savepriorpoolcnt >> $filePath/savetodaypoolcnt.txt          # save the pool cnt for next chk
-
-        rm $filePath/temppool.txt
 }
 ##'------------------------'
 ##  END poolcount function
@@ -730,4 +729,5 @@ rm $filePath/temp21.txt
 exit 0
 
 # Lstats.sh
+
 ```
