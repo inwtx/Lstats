@@ -9,7 +9,7 @@ The output can be accessed by: yourDN/Lstats.html
 ```
 #!/bin/bash
 #
-# Lstats v1.4
+# Lstats v1.5
 #
 # Script to build remailer server statistics Lstats.html
 #
@@ -193,7 +193,7 @@ awk -F '[ \t\n\v\r]' '{print "<br>"$2" "$3" "$4" "$5" "$8" "$9" "$10" "$11" "$12
 ###Bandwidth
 if pidof -x "vnstatd" >/dev/null; then
    var1=$(date |  awk '{print $2" "}')  #
-   var2=$(date +"'%g")
+   var2=$(date +"'%y")
    var3=$var1$var2
    var4=$(grep -e "$var3" <<< $(vnstat))
    bline=$(awk '{print "MTD bandwidth: " $1" "$2" - "$9" "$10}' <<<$var4)
@@ -417,7 +417,7 @@ while read line1; do
    ((var2++))
    var3=$(awk -F '[ \t\n\v\r.]' '{print $1" "$2}' <<< $line1)  # get 2014-05-08 2014-11-04
    var9=$(awk -v var8=$var2 'NR==var8' $filePath/temp16.txt)  # pull stacked dates from temp12.txt
-   var10=$(date +"%G-%m-%d")
+   var10=$(date +"%Y-%m-%d")
    days=$(( ($(date --date=$var9 +%s) - $(date --date=$var10 +%s) )/(60*60*24) ))   # calc days between
    var5=$days
    var7=$(sed -n $var2'p' $filePath/temp14.txt)
