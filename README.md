@@ -71,6 +71,21 @@ MachineRogueTableWidth=1112
 MixMiscRemailerTableWidth=870
 
 
+##'----------------------------'
+## BEGIN Stats source selection
+##'----------------------------'
+# Place the stat source URL followed by a semicolon followed by any stat title.
+# Example: "stat source URL;stat title"
+statarray=(
+"http://www.mixmin.net/echolot/mlist.txt;mixmin4096"
+"sec3.net/echolot/mlist.txt;sec3"
+"pinger.borked.net/mlist.txt;borked"
+"https://apricot.fruiti.org/echolot/mlist.txt;apricot"
+)
+##'--------------------------'
+## END Stats source selection
+##'--------------------------'
+
 
 ##'------------------------'
 ## BEGIN poolcount function
@@ -283,7 +298,6 @@ echo "</td></tr></table>" >> $webpgpath/$webpgnm
 echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm
 
 
-
 ##'-------------------------------'
 ## BEGIN 1st Mixmaster stats table
 ##'-------------------------------'
@@ -446,6 +460,7 @@ echo "</td></tr></table>" >> $webpgpath/$webpgnm
 ## BEGIN mixmaster error log table
 ##'-------------------------------'
 ##'-------------------------------'
+
 if [[ $(grep -c " Error: " $mixpath/error.log) -gt 0 ]] ; then
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
    <font face=\"Verdana\" size=$fontsz color=FF0000><b>Mix Errors</b></font></td></tr>
@@ -456,6 +471,7 @@ if [[ $(grep -c " Error: " $mixpath/error.log) -gt 0 ]] ; then
    cat $filePath/templ.txt >> $webpgpath/$webpgnm
    echo "</font></td></tr></table><br>" >> $webpgpath/$webpgnm
 fi
+
 ##'-------------------------------'
 ##'-------------------------------'
 ##  END mixmaster error log table
@@ -475,13 +491,6 @@ echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm
 ##'--------------------------'
 ## BEGIN remailer stats table
 ##'--------------------------'
-
-statarray=(
-"http://www.mixmin.net/echolot/mlist.txt;mixmin4096"  # mlist url;title
-"sec3.net/echolot/mlist.txt;sec3"
-"pinger.borked.net/mlist.txt;borked"
-"https://apricot.fruiti.org/echolot/mlist.txt;apricot"
-)
 
 varaLS=0
 
