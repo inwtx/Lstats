@@ -9,7 +9,7 @@ The output can be accessed by: yourDN/Lstats.html
 ```
 #!/bin/bash
 #
-# Lstats v1.5
+# Lstats v1.6
 #
 # Script to build remailer server statistics Lstats.html
 #
@@ -34,7 +34,7 @@ The output can be accessed by: yourDN/Lstats.html
 export PATH=$PATH:/sbin
 export PATH=$PATH:/bin
 
-webpgnm="/private/Lstats.html"
+webpgnm="/Lstats.html"
 mixmastername="mixmaster"
 mixpath="/var/mixmaster"       # no trailing /
 webpgpath="/var/www/html"      # no trailing /
@@ -116,7 +116,6 @@ function poolcount(){      #count pool for day
 cat /dev/null > $webpgpath/$webpgnm  # clear html file
 
 echo "<html><head><title>Server Stats</title></head><body bgcolor=\"$bgclr\" TEXT=\"$fontcolor\" LANG=\"en-US\" DIR=\"LTR\">" > $webpgpath/$webpgnm
-
 
 ##'-------------------'
 ## BEGIN Top date line
@@ -453,7 +452,6 @@ if [[ $(grep -c " Error: " $mixpath/error.log) -gt 0 ]] ; then
    <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
    echo "(This error list will be removed only by clearing the error.log)" > $filePath/templ.txt
    grep " Error: " $mixpath/error.log >> $filePath/templ.txt
-#   grep " Error: " $mixpath/error.log > $filePath/templ.txt
    sed -i 's/$/<br>/' $filePath/templ.txt   # add <br> to end of every rec
    cat $filePath/templ.txt >> $webpgpath/$webpgnm
    echo "</font></td></tr></table><br>" >> $webpgpath/$webpgnm
@@ -474,173 +472,71 @@ fi
 echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm
 
 
-##'------------------------------'
-## BEGIN 1st remailer stats table
-##'------------------------------'
-echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" size=$fontsz><b>Remailer Statistics (mixmin4096)</b></font></td></tr>
-<tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+##'--------------------------'
+## BEGIN remailer stats table
+##'--------------------------'
 
-if [[ $(date +"%M") = "00" ]] || \
-   [[ $(date +"%M") = "10" ]] || \
-   [[ $(date +"%M") = "20" ]] || \
-   [[ $(date +"%M") = "30" ]] || \
-   [[ $(date +"%M") = "40" ]] || \
-   [[ $(date +"%M") = "50" ]] || \
-   [[ ! -s $filePath/astats.txt ]] || [[ $dostats = "y" ]]; then
-   sleep 5  # pause on 1st stat collect for pingers to finish updating their stats
-   wget  --no-check-certificate --timeout=15  -t 1 http://www.mixmin.net/echolot/mlist.txt -O $filePath/mixmin4096.txt
-   echo $(date) > $filePath/statdate.txt
-fi
+statarray=(
+"http://www.mixmin.net/echolot/mlist.txt;mixmin4096"  # mlist url;title
+"sec3.net/echolot/mlist.txt;sec3"
+"pinger.borked.net/mlist.txt;borked"
+"https://apricot.fruiti.org/echolot/mlist.txt;apricot"
+)
 
-savdate=$(< $filePath/statdate.txt)
-grep "%"  $filePath/mixmin4096.txt | colrm 16 28 > $filePath/astats.txt
-sed -i 's/ /\&nbsp;/g' $filePath/astats.txt
-sed -i 's/^/\&nbsp;/' $filePath/astats.txt       # prepend a blank
-sed -i 's/$/\&nbsp;/' $filePath/astats.txt       # append a blank
-sed -i "1i&nbsp;$savdate" $filePath/astats.txt
-sed -i 's/$/<br>/' $filePath/astats.txt
+varaLS=0
 
-#statcolor
+for i in "${statarray[@]}"; do
+   varLS=$i
+   ((varaLS++))
 
-rm $filePath/templ.txt
+   echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
+   <font face=\"Verdana\" size=$fontsz><b>Remailer Statistics (${varLS##*;})</b></font></td></tr>
+   <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+#t5
+   if [[ $(date +"%M") = "00" ]] || \
+      [[ $(date +"%M") = "10" ]] || \
+      [[ $(date +"%M") = "20" ]] || \
+      [[ $(date +"%M") = "30" ]] || \
+      [[ $(date +"%M") = "40" ]] || \
+      [[ $(date +"%M") = "50" ]] || \
+      [[ ! -s $filePath/astats.txt ]] || [[ $dostats = "y" ]]; then
+      if [[ varaLS -eq 1 ]]; then  #  only pause at 1st stat download
+         sleep 5                   #  pause on 1st stat collect for pingers to finish updating their stats
+      fi
+      wget  --no-check-certificate --timeout=15  -t 1 ${varLS%%;*} -O $filePath/varmlist.txt
+      echo $(date) > $filePath/statdate.txt
+   fi
 
-cat $filePath/astats.txt >> $webpgpath/$webpgnm
-echo "</font></td></tr></table>" >> $webpgpath/$webpgnm
-##'------------------------------'
-##  END 1st remailer stats table
-##'------------------------------'
+   savdate=$(< $filePath/statdate.txt)
+   grep "%"  $filePath/mixmin4096.txt | colrm 16 28 > $filePath/astats.txt
+   sed -i 's/ /\&nbsp;/g' $filePath/astats.txt
+   sed -i 's/^/\&nbsp;/' $filePath/astats.txt       # prepend a blank
+   sed -i 's/$/\&nbsp;/' $filePath/astats.txt       # append a blank
+   sed -i "1i&nbsp;$savdate" $filePath/astats.txt
+   sed -i 's/$/<br>/' $filePath/astats.txt
 
+   #statcolor
 
-##'------------------------------------'
-echo "</td><td>" >> $webpgpath/$webpgnm  # MIDDLE: vertical divider between 1st and 2nd remailer stats tables
-##'------------------------------------'
+   rm $filePath/templ.txt
 
+   cat $filePath/astats.txt >> $webpgpath/$webpgnm
+   echo "</font></td></tr></table>" >> $webpgpath/$webpgnm
 
-##'------------------------------'
-## BEGIN 2nd remailer stats table
-##'------------------------------'
-echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" size=$fontsz><b>Remailer Statistics (sec3)</b></font></td></tr>
-<tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+   if [[ $varaLS -ne ${#statarray[*]} ]]; then
+      echo "</td><td>" >> $webpgpath/$webpgnm  # MIDDLE: vertical divider between 1st and 2nd remailer stats tables
+   fi
 
-if [[ $(date +"%M") = "00" ]] || \
-   [[ $(date +"%M") = "10" ]] || \
-   [[ $(date +"%M") = "20" ]] || \
-   [[ $(date +"%M") = "30" ]] || \
-   [[ $(date +"%M") = "40" ]] || \
-   [[ $(date +"%M") = "50" ]] || \
-   [[ ! -s $filePath/astats.txt ]] || [[ $dostats = "y" ]]; then
-   sleep 5  # pause on 1st stat collect for pingers to finish updating their stats
-   wget  --no-check-certificate --timeout=15  -t 1 sec3.net/echolot/mlist.txt -O $filePath/sec3.txt
-   echo $(date) > $filePath/statdate.txt
-fi
+done
 
-savdate=$(< $filePath/statdate.txt)
-grep "%"  $filePath/sec3.txt | colrm 16 28 > $filePath/astats.txt
-sed -i 's/ /\&nbsp;/g' $filePath/astats.txt
-sed -i 's/^/\&nbsp;/' $filePath/astats.txt       # prepend a blank
-sed -i 's/$/\&nbsp;/' $filePath/astats.txt       # append a blank
-sed -i "1i&nbsp;$savdate" $filePath/astats.txt
-sed -i 's/$/<br>/' $filePath/astats.txt
+##'--------------------------'
+##  END remailer stats table
+##'--------------------------'
 
-#statcolor
-
-rm $filePath/templ.txt
-
-cat $filePath/astats.txt >> $webpgpath/$webpgnm
-echo "</font></td></tr></table>" >> $webpgpath/$webpgnm
-##'------------------------------'
-##  END 2nd remailer stats table
-##'------------------------------'
-
-
-##'------------------------------------'
-echo "</td><td>" >> $webpgpath/$webpgnm  # MIDDLE: vertical divider between 2nd and 3rd remailer stats tables
-##'------------------------------------'
-
-
-##'-------------------------------'
-## BEGIN 3rd Mixmaster stats table
-##'-------------------------------'
-echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" size=$fontsz><b>Remailer Statistics (borked)</b></font></td></tr>
-<tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
-
-if [[ $(date +"%M") = "00" ]] || \
-   [[ $(date +"%M") = "10" ]] || \
-   [[ $(date +"%M") = "20" ]] || \
-   [[ $(date +"%M") = "30" ]] || \
-   [[ $(date +"%M") = "40" ]] || \
-   [[ $(date +"%M") = "50" ]] || \
-   [[ ! -s $filePath/astats.txt ]] || [[ $dostats = "y" ]]; then
-   sleep 5  # pause on 1st stat collect for pingers to finish updating their stats
-   wget  --no-check-certificate --timeout=15  -t 1 pinger.borked.net/mlist.txt -O $filePath/borked.txt
-   echo $(date) > $filePath/statdate.txt
-fi
-
-savdate=$(< $filePath/statdate.txt)
-grep "%"  $filePath/borked.txt | colrm 16 28 > $filePath/astats.txt
-sed -i 's/ /\&nbsp;/g' $filePath/astats.txt
-sed -i 's/^/\&nbsp;/' $filePath/astats.txt       # prepend a blank
-sed -i 's/$/\&nbsp;/' $filePath/astats.txt       # append a blank
-sed -i "1i&nbsp;$savdate" $filePath/astats.txt
-sed -i 's/$/<br>/' $filePath/astats.txt
-
-#statcolor
-
-rm $filePath/templ.txt
-
-cat $filePath/astats.txt >> $webpgpath/$webpgnm
-echo "</font></td></tr></table>" >> $webpgpath/$webpgnm
-##'------------------------------'
-##  END 3rd remailer stats table
-##'------------------------------'
-
-
-##'------------------------------------'
-echo "</td><td>" >> $webpgpath/$webpgnm  # MIDDLE: vertical divider between 3rd and 4th remailer stats tables
-##'------------------------------------'
-
-
-##'-------------------------------'
-## BEGIN 4th Mixmaster stats table
-##'-------------------------------'
-echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" size=$fontsz><b>Remailer Statistics (apricot)</b></font></td></tr>
-<tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
-
-if [[ $(date +"%M") = "00" ]] || \
-   [[ $(date +"%M") = "10" ]] || \
-   [[ $(date +"%M") = "20" ]] || \
-   [[ $(date +"%M") = "30" ]] || \
-   [[ $(date +"%M") = "40" ]] || \
-   [[ $(date +"%M") = "50" ]] || \
-   [[ ! -s $filePath/astats.txt ]] || [[ $dostats = "y" ]]; then
-   sleep 5  # pause on 1st stat collect for pingers to finish updating their stats
-   wget  --no-check-certificate --timeout=15  -t 1 https://apricot.fruiti.org/echolot/mlist.txt -O $filePath/apricot.txt
-   echo $(date) > $filePath/statdate.txt
-fi
-
-savdate=$(< $filePath/statdate.txt)
-grep "%"  $filePath/apricot.txt | colrm 16 28 > $filePath/astats.txt
-sed -i 's/ /\&nbsp;/g' $filePath/astats.txt
-sed -i 's/^/\&nbsp;/' $filePath/astats.txt       # prepend a blank
-sed -i 's/$/\&nbsp;/' $filePath/astats.txt       # append a blank
-sed -i "1i&nbsp;$savdate" $filePath/astats.txt
-sed -i 's/$/<br>/' $filePath/astats.txt
-
-#statcolor
-
-rm $filePath/templ.txt
-
-cat $filePath/astats.txt >> $webpgpath/$webpgnm
-echo "</font></td></tr></table>" >> $webpgpath/$webpgnm
-##'------------------------------'
-##  END 4th remailer stats table
-##'------------------------------'
-
-
+##'--------------------------------------'
+##'--------------------------------------'
+##  END remailers stats horzontal tables
+##'--------------------------------------'
+##'--------------------------------------'
 
    echo "</font></td></tr></table><br>" >> $webpgpath/$webpgnm
 ##'--------------------------------------'
@@ -649,6 +545,29 @@ echo "</font></td></tr></table>" >> $webpgpath/$webpgnm
 ##'--------------------------------------'
 ##'--------------------------------------'
 
+##'-------------------'
+##'-------------------'
+## BEGIN display mailq
+##'-------------------'
+##'-------------------'
+vattest=$(mailq)
+if [[ ! $vattest = "Mail queue is empty" ]]; then
+   echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
+   <font face=\"Verdana\" size=$fontsz><b>Mailq</b></font></td></tr>
+   <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+
+   echo "$vattest" | sort | uniq -c | sort -nk1 | awk '{$1=$1}1' | sed '/^.\{10,50\}$/!d' | grep -v "Request" > $filePath/templ.txt
+   sed -e 's/$/<br>/' $filePath/templ.txt >> $webpgpath/$webpgnm
+   echo "<br>" >> $webpgpath/$webpgnm
+
+   echo "$vattest" > $filePath/templ.txt
+   sed -e 's/$/<br>/' $filePath/templ.txt >> $webpgpath/$webpgnm
+   echo "</font></td></tr></table><br>" >> $webpgpath/$webpgnm
+fi
+##'-------------------'
+##'-------------------'
+##  END display mailq
+##'-------------------'
 
 ##'------------------------------------------'
 ##'------------------------------------------'
@@ -686,30 +605,6 @@ echo "</td></tr></table>" >> $webpgpath/$webpgnm  # END
 ##'------------------------------------------'
 
 
-##'-------------------'
-##'-------------------'
-## BEGIN display mailq
-##'-------------------'
-##'-------------------'
-vattest=$(mailq)
-if [[ ! $vattest = "Mail queue is empty" ]]; then
-   echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-   <font face=\"Verdana\" size=$fontsz><b>Mailq</b></font></td></tr>
-   <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
-
-   echo "$vattest" | sort | uniq -c | sort -nk1 | awk '{$1=$1}1' | sed '/^.\{10,50\}$/!d' | grep -v "Request" > $filePath/templ.txt
-   sed -e 's/$/<br>/' $filePath/templ.txt >> $webpgpath/$webpgnm
-   echo "<br>" >> $webpgpath/$webpgnm
-
-   echo "$vattest" > $filePath/templ.txt
-   sed -e 's/$/<br>/' $filePath/templ.txt >> $webpgpath/$webpgnm
-   echo "</font></td></tr></table><br>" >> $webpgpath/$webpgnm
-fi
-##'-------------------'
-##'-------------------'
-##  END display mailq
-##'-------------------'
-##'-------------------'
 
 echo "</body></html>" >> $webpgpath/$webpgnm
 
