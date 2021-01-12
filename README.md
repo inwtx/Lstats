@@ -74,7 +74,7 @@ MixMiscRemailerTableWidth=870
 ##'----------------------------'
 ## BEGIN Stats source selection
 ##'----------------------------'
-# Place the stat source URL followed by a semicolon followed by any stat title.
+# Place the stat source URL followed by a semicolon followed by any stat title in the statarray.
 # Example: "stat source URL;stat title"
 statarray=(
 "http://www.mixmin.net/echolot/mlist.txt;mixmin4096"
