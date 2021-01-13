@@ -9,7 +9,7 @@ The output can be accessed by: yourDN/Lstats.html
 ```
 #!/bin/bash
 #
-# Lstats v1.8
+# Lstats v1.9
 #
 # Script to build remailer server statistics Lstats.html
 #
@@ -503,19 +503,11 @@ for i in "${statarray[@]}"; do
    <font face=\"Verdana\" size=$fontsz><b>Remailer Statistics (${varLS##*;})</b></font></td></tr>
    <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 #t5
-   if [[ $(date +"%M") = "00" ]] || \
-      [[ $(date +"%M") = "10" ]] || \
-      [[ $(date +"%M") = "20" ]] || \
-      [[ $(date +"%M") = "30" ]] || \
-      [[ $(date +"%M") = "40" ]] || \
-      [[ $(date +"%M") = "50" ]] || \
-      [[ ! -s $filePath/astats.txt ]] || [[ $dostats = "y" ]]; then
-      if [[ $varaLS -eq 1 ]]; then  #  only pause at 1st stat download
-         sleep 5                   #  pause on 1st stat collect for pingers to finish updating their stats
-      fi
-      wget  --no-check-certificate --timeout=15  -t 1 ${varLS%%;*} -O $filePath/varmlist.txt
-      echo $(date) > $filePath/statdate.txt
+   if [[ $varaLS -eq 1 ]]; then  #  only pause at 1st stat download
+      sleep 5                   #  pause on 1st stat collect for pingers to finish updating their stats
    fi
+   wget  --no-check-certificate --timeout=15  -t 1 ${varLS%%;*} -O $filePath/varmlist.txt
+   echo $(date) > $filePath/statdate.txt
 
    savdate=$(< $filePath/statdate.txt)
    grep "%"  $filePath/varmlist.txt | colrm 16 28 > $filePath/astats.txt
