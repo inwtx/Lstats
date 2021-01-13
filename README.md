@@ -9,7 +9,7 @@ The output can be accessed by: yourDN/Lstats.html
 ```
 #!/bin/bash
 #
-# Lstats v1.6
+# Lstats v1.7
 #
 # Script to build remailer server statistics Lstats.html
 #
@@ -518,7 +518,7 @@ for i in "${statarray[@]}"; do
    fi
 
    savdate=$(< $filePath/statdate.txt)
-   grep "%"  $filePath/mixmin4096.txt | colrm 16 28 > $filePath/astats.txt
+   grep "%"  $filePath/varmlist.txt | colrm 16 28 > $filePath/astats.txt
    sed -i 's/ /\&nbsp;/g' $filePath/astats.txt
    sed -i 's/^/\&nbsp;/' $filePath/astats.txt       # prepend a blank
    sed -i 's/$/\&nbsp;/' $filePath/astats.txt       # append a blank
