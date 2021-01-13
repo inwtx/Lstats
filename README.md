@@ -510,7 +510,7 @@ for i in "${statarray[@]}"; do
       [[ $(date +"%M") = "40" ]] || \
       [[ $(date +"%M") = "50" ]] || \
       [[ ! -s $filePath/astats.txt ]] || [[ $dostats = "y" ]]; then
-      if [[ varaLS -eq 1 ]]; then  #  only pause at 1st stat download
+      if [[ $varaLS -eq 1 ]]; then  #  only pause at 1st stat download
          sleep 5                   #  pause on 1st stat collect for pingers to finish updating their stats
       fi
       wget  --no-check-certificate --timeout=15  -t 1 ${varLS%%;*} -O $filePath/varmlist.txt
