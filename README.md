@@ -9,7 +9,7 @@ The output can be accessed by: yourDN/Lstats.html
 ```
 #!/bin/bash
 #
-# Lstats v1.9
+# Lstats v2.0
 #
 # Script to build remailer server statistics Lstats.html
 #
@@ -176,6 +176,10 @@ echo "Domain name: $dname<br>" >> $webpgpath/$webpgnm
 
 # MTU
 echo "$(ifconfig | sed '1!d' | awk '{print "MTU: " $4}')<br>" >> $webpgpath/$webpgnm
+
+## ipv4 TTL & ipv6 HOP count
+echo "ipv4 TTL: $(sysctl net.ipv4.ip_default_ttl | awk '{ print $3 }')<br>" >> $webpgpath/$webpgnm
+echo "ipv6 HOP: $(sysctl net.ipv6.conf.all.hop_limit | awk '{ print $3 }')<br>" >> $webpgpath/$webpgnm
 
 ## openssl
 echo "$(openssl version)" | awk '{print $1" "$2" ("$3" "$4" "$5")<br>"}' >> $webpgpath/$webpgnm
