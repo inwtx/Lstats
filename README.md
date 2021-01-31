@@ -137,9 +137,9 @@ echo "<html><head><title>Server Stats</title></head><body bgcolor=\"$bgclr\" TEX
 ## BEGIN Top date line
 ##'-------------------'
 echo "<font face=\"Verdana\" size=$fontsz color=\"$fontcolor\"><b>&nbsp;" >> $webpgpath/$webpgnm
-MLvar=$(date | cut -c 1-10 && date | cut -c 25-28 && echo "-" && date | cut -c 12-23)
-MLvar=${MLvar//:01 / } && MLvar=${MLvar//:02 / } && MLvar=${MLvar//:03 / }  # remove seconds position
-echo "$MLvar" - ${0##*/} >> $webpgpath/$webpgnm
+MLvar=$(date | awk '{print $0" "$2" "$3" "$6" "$4}' | awk '{print "("$1") "$7" "$8", "$9" &nbsp;&nbsp; "$10}')
+MLvar="${MLvar%:*} $(date | awk '{print $5}') &nbsp;&nbsp; ${0##*/}"
+echo "&nbsp;&nbsp;$MLvar" >> $webpgpath/$webpgnm
 echo "</font></b><br>" >> $webpgpath/$webpgnm
 ##'-------------------'
 ##  END Top date line
