@@ -9,7 +9,7 @@ The output can be accessed by: yourDN/Lstats.html
 ```
 #!/bin/bash
 #
-# Lstats v2.1
+# Lstats v2.2
 #
 # Script to build remailer server statistics Lstats.html
 #
@@ -198,11 +198,10 @@ if [[ $SSLvar2 -le 3 ]];then
 fi
 
 ## last boot time
-xvar1=$(who -b | awk '{print $3}' | date -d $? "+%b-%d-%Y")        # Nov-22-2020
-xvar2=$(echo $(who -b) | awk '{print "Last "$1" "$2": "$3" "$4}')  # Last system boot: 2020-11-14 15:17
-xvar3=$(awk '{print $1" "$2" "$3}' <<<$xvar2)
-xvar4=$(awk '{print $5}' <<<$xvar2)
-echo "$xvar3 $xvar1 $xvar4" >> $webpgpath/$webpgnm
+lsvar1=$((who -b) | awk '{print $3}')  # 2021-01-06
+lsvar2=$(date -d $lsvar1 +%b-%d-%Y)    # cvt date to Jan-06-2021
+lsvar3=$((who -b) | awk '{print $4}')  # 12:43
+echo "Last system reboot: $lsvar2 $lsvar3" >> $webpgpath/$webpgnm  # Last system boot: 2020-11-14 15:17
 
 ## up time
 varupt=`echo ${varupt//up/Up}`
