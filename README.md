@@ -7,9 +7,18 @@ The output can be accessed by: yourDN/Lstats.html
   
   
 ```
+# Lstats - Mixmaster Remailer Dashboard
+
+This script can be used by a remailer sysops to monitor their mixmaster server and remailer performance.  
+Copy the script code below into a file called Lstats.sh and make it executable (sudo chmod 755 Lstats.sh).  
+Then execute it with a cron as explained in at the top of the script code.  
+The output can be accessed by: yourDN/Lstats.html
+  
+  
+```
 #!/bin/bash
 #
-# Lstats v2.2
+# Lstats v2.3
 #
 # Script to build remailer server statistics Lstats.html
 #
@@ -31,6 +40,7 @@ The output can be accessed by: yourDN/Lstats.html
 #------------------------------------------------------------------------#
 
 #top
+export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
 export PATH=$PATH:/bin
 
@@ -55,8 +65,8 @@ tempnum=0
 fontsz="2"
 hfontsz="2"
 bgclr=#EBEADF
-fontcolor=#00000040
-titlecolor=#f0f0f0
+fontcolor=#000040
+fontcl=FFFFFF
 machinewidth=430
 roguewidth=200
 freewidth=230
@@ -66,7 +76,7 @@ iptableswidth=125
 miscstats=200
 mixfiles=160
 remailerstatistics=230
-titlecolor=#f0f0f0
+titlecolor=#0072AA
 MachineRogueTableWidth=1112
 MixMiscRemailerTableWidth=870
 
@@ -139,7 +149,7 @@ echo "<html><head><title>Server Stats</title></head><body bgcolor=\"$bgclr\" TEX
 echo "<font face=\"Verdana\" size=$fontsz color=\"$fontcolor\"><b>&nbsp;" >> $webpgpath/$webpgnm
 MLvar=$(date | awk '{print $0" "$2" "$3" "$6" "$4}' | awk '{print "("$1") "$7" "$8", "$9" &nbsp;&nbsp; "$10}')
 MLvar="${MLvar%:*} $(date | awk '{print $5}') &nbsp;&nbsp; ${0##*/}"
-echo "&nbsp;&nbsp;$MLvar" >> $webpgpath/$webpgnm
+echo "&nbsp;$MLvar" >> $webpgpath/$webpgnm
 echo "</font></b><br>" >> $webpgpath/$webpgnm
 ##'-------------------'
 ##  END Top date line
@@ -158,7 +168,7 @@ echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm
 ## BEGIN Machine table
 ##'-------------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<b><font face=\"Verdana\" size=$fontsz><b>Machine</b></font></td></tr>
+<b><font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Machine</b></font></td></tr>
 <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 ## linux info
@@ -252,7 +262,7 @@ echo "</td><td>" >> $webpgpath/$webpgnm  # MIDDLE: vertical divider between Mach
 ## BEGIN Netstats table
 ##'--------------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" size=$fontsz><b>Netstats</b></font></td></tr>
+<font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Netstats</b></font></td></tr>
 <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 netstat -vatnp > $filePath/templ.txt
 
@@ -273,7 +283,7 @@ echo "</font></td></tr></table><br>" >> $webpgpath/$webpgnm
 ## BEGIN Free table
 ##'----------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" size=$fontsz><b>Free</b></font></td></tr>
+<font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Free</b></font></td></tr>
 <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 free > $filePath/templ.txt
@@ -306,7 +316,7 @@ echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm
 ## BEGIN 1st Mixmaster stats table
 ##'-------------------------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" size=$fontsz><b>Mixmaster</b></font></td></tr>
+<font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Mixmaster</b></font></td></tr>
 <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 ## mailq
@@ -389,7 +399,7 @@ echo "</td><td>" >> $webpgpath/$webpgnm  # MIDDLE: vertical divider between 1st 
 ## BEGIN 2nd Mixmaster stats table
 ##'-------------------------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" size=$fontsz><b>Mixmaster</b></font></td></tr>
+<font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Mixmaster</b></font></td></tr>
 <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 ## top stats
@@ -467,7 +477,7 @@ echo "</td></tr></table>" >> $webpgpath/$webpgnm
 
 if [[ $(grep -c " Error: " $mixpath/error.log) -gt 0 ]] ; then
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-   <font face=\"Verdana\" size=$fontsz color=FF0000><b>Mix Errors</b></font></td></tr>
+   <font face=\"Verdana\" size=$fontsz color="$fontcl" color=FF0000><b>Mix Errors</b></font></td></tr>
    <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
    echo "(This error list will be removed only by clearing the error.log)" > $filePath/templ.txt
    grep " Error: " $mixpath/error.log >> $filePath/templ.txt
@@ -503,7 +513,7 @@ for i in "${statarray[@]}"; do
    ((varaLS++))
 
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-   <font face=\"Verdana\" size=$fontsz><b>Remailer Statistics (${varLS##*;})</b></font></td></tr>
+   <font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Remailer Statistics (${varLS##*;})</b></font></td></tr>
    <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 #t5
    if [[ $varaLS -eq 1 ]]; then  #  only pause at 1st stat download
@@ -513,7 +523,7 @@ for i in "${statarray[@]}"; do
    echo $(date) > $filePath/statdate.txt
 
    savdate=$(< $filePath/statdate.txt)
-   grep "%"  $filePath/varmlist.txt | colrm 16 28 > $filePath/astats.txt
+   grep "%" $filePath/varmlist.txt | colrm 16 28 > $filePath/astats.txt
    sed -i 's/ /\&nbsp;/g' $filePath/astats.txt
    sed -i 's/^/\&nbsp;/' $filePath/astats.txt       # prepend a blank
    sed -i 's/$/\&nbsp;/' $filePath/astats.txt       # append a blank
@@ -558,7 +568,7 @@ done
 vattest=$(mailq)
 if [[ ! $vattest = "Mail queue is empty" ]]; then
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-   <font face=\"Verdana\" size=$fontsz><b>Mailq</b></font></td></tr>
+   <font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Mailq</b></font></td></tr>
    <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
    echo "$vattest" | sort | uniq -c | sort -nk1 | awk '{$1=$1}1' | sed '/^.\{10,50\}$/!d' | grep -v "Request" > $filePath/templ.txt
@@ -586,7 +596,7 @@ echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm  # BEGIN
 ## BEGIN pool table
 ##'----------------'
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-   <font face=\"Verdana\" size=$fontsz><b>Pool "-" $(find $mixpath/pool -type f | wc -l) "-" $(date +"%r")</font></td></tr>
+   <font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Pool "-" $(find $mixpath/pool -type f | wc -l) "-" $(date +"%r")</font></td></tr>
    <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 ## put count of each rec type here
@@ -630,4 +640,5 @@ exit 0
 
 # Lstats.sh
 
+```
 ```
