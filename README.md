@@ -49,7 +49,6 @@ webpgpath="/var/www/html"      # no trailing /
 sshlog="/var/log/auth.log"
 certpath="/etc/ssl/private/letsencrypt-domain.pem"
 tempdisp="yes"
-dostats="$1"
 expdwarn=30
 filePath=${0%/*}  # current file path
 stathighlight="#ff1493"
