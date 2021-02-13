@@ -16,26 +16,28 @@ The output can be accessed by: yourDN/Lstats.html
 ```
 #!/bin/bash
 #
-# Lstats v2.3
+# Lstats v2.4
 #
 # Script to build remailer server statistics Lstats.html
 #
-#------------------------------------------------------------------------#
-#              --- Server statistics web page builder ---                #
-#                                                                        #
-# The following script can be used to monitor a remailer servers.        #
-# Several statistics concerning the server and mixmaster are displayed.  #
-# The script must be executed every 1 minutes to get a more accurate     #
-# pool count. The script must also be executed at 0000 hours to reset    #
-# the pool count display to zero. Can name Lstats.sh                     #
-#                                                                        #
-# Retrieve stastics for server web page - cron job                       #
-# */1 * * * * /path/to/Lstats.sh &> /dev/null                            #
-#                                                                        #
-# Cert expdt: (Must point to server's certificate in certpath=)          #
-# MTD bandwidth: (Must install & run: vnstatd -n)                        #
-#                                                                        #
-#------------------------------------------------------------------------#
+#-------------------------------------------------------------------------#
+#              --- Server statistics web page builder ---                 #
+#                                                                         #
+# The following script can be used to monitor a remailer servers.         #
+# Several statistics concerning the server and mixmaster are displayed.   #
+# The script must be executed every 1 minutes to get a more accurate      #
+# pool count. The script must also be executed at 0000 hours to reset     #
+# the pool count display to zero. Can name Lstats.sh                      #
+#                                                                         #
+# Retrieve stastics for server web page - cron job                        #
+# */1 * * * * /path/to/Lstats.sh &> /dev/null                             #
+# To highlight up to 5 remailer lines in the Remailer Statistics, execute #
+# */1 * * * * /path/to/Lstats.sh name1 name2 ... name5 &> /dev/null       #
+#                                                                         #
+# Cert expdt: (Must point to server's certificate in certpath=)           #
+# MTD bandwidth: (Must install & run: vnstatd -n)                         #
+#                                                                         #
+#-------------------------------------------------------------------------#
 
 #top
 export PATH=$PATH:/usr/sbin
@@ -45,7 +47,7 @@ export PATH=$PATH:/bin
 webpgnm="/Lstats.html"
 mixmastername="mixmaster"
 mixpath="/var/mixmaster"       # no trailing /
-webpgpath="/var/www/html"      # no trailing /
+webpgpath="/var/www/html"
 sshlog="/var/log/auth.log"
 certpath="/etc/ssl/private/letsencrypt-domain.pem"
 tempdisp="yes"
@@ -53,9 +55,11 @@ expdwarn=30
 filePath=${0%/*}  # current file path
 stathighlight="#ff1493"
 varupt=$(uptime)
-remailerid="$1"
-mmid=$remailerid
-serverid="$remailerid - "
+remailerid1="$1"
+remailerid2="$2"
+remailerid3="$3"
+remailerid4="$4"
+remailerid5="$5"
 dname=""
 tempvar=""
 tempnum=0
@@ -93,6 +97,31 @@ statarray=(
 ##'--------------------------'
 ## END Stats source selection
 ##'--------------------------'
+
+
+##'------------------------'
+## BEGIN Surround function
+##'------------------------'
+function Surround {
+   line1=$1
+   keyword=$2
+   pre=$3
+   post=$4
+
+   if  [[ $keyword == "" ]]; then
+       result="$pre$line1$post"
+       output=$result
+       else
+       result="$pre$keyword$post"
+       output=$result
+   fi
+
+   echo "$output" >> $filePath/templ.txt2
+   cat $filePath/templ.txt2   #//   <------ TEST ONLY   DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE
+}
+##'----------------------'
+## END Surround function
+##'----------------------'
 
 
 ##'------------------------'
@@ -300,7 +329,6 @@ echo "</td></tr></table>" >> $webpgpath/$webpgnm
 ##'----------------------------------------------'
 
 
-
 ##'-----------------------------------------------------'
 ##'-----------------------------------------------------'
 ## BEGIN Misc Stats/Mixmaster/Mixmaster horzontal tables
@@ -471,7 +499,6 @@ echo "</td></tr></table>" >> $webpgpath/$webpgnm
 ## BEGIN mixmaster error log table
 ##'-------------------------------'
 ##'-------------------------------'
-
 if [[ $(grep -c " Error: " $mixpath/error.log) -gt 0 ]] ; then
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
    <font face=\"Verdana\" size=$fontsz color="$fontcl" color=FF0000><b>Mix Errors</b></font></td></tr>
@@ -482,13 +509,11 @@ if [[ $(grep -c " Error: " $mixpath/error.log) -gt 0 ]] ; then
    cat $filePath/templ.txt >> $webpgpath/$webpgnm
    echo "</font></td></tr></table><br>" >> $webpgpath/$webpgnm
 fi
-
 ##'-------------------------------'
 ##'-------------------------------'
 ##  END mixmaster error log table
 ##'-------------------------------'
 ##'-------------------------------'
-
 
 
 ##'--------------------------------------'
@@ -502,7 +527,6 @@ echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm
 ##'--------------------------'
 ## BEGIN remailer stats table
 ##'--------------------------'
-
 varaLS=0
 
 for i in "${statarray[@]}"; do
@@ -512,12 +536,13 @@ for i in "${statarray[@]}"; do
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
    <font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Remailer Statistics (${varLS##*;})</b></font></td></tr>
    <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
-#t5
-   if [[ $varaLS -eq 1 ]]; then  #  only pause at 1st stat download
-      sleep 5                   #  pause on 1st stat collect for pingers to finish updating their stats
-   fi
-   wget  --no-check-certificate --timeout=15  -t 1 ${varLS%%;*} -O $filePath/varmlist.txt
-   echo $(date) > $filePath/statdate.txt
+
+      if [[ $varaLS -eq 1 ]]; then  #  only pause at 1st stat download
+         sleep 5                  #  pause on 1st stat collect for pingers to finish updating their stats
+      fi
+
+      wget  --no-check-certificate --timeout=15  -t 1 ${varLS%%;*} -O $filePath/varmlist.txt
+      echo $(date) > $filePath/statdate.txt
 
    savdate=$(< $filePath/statdate.txt)
    grep "%" $filePath/varmlist.txt | colrm 16 28 > $filePath/astats.txt
@@ -525,11 +550,32 @@ for i in "${statarray[@]}"; do
    sed -i 's/^/\&nbsp;/' $filePath/astats.txt       # prepend a blank
    sed -i 's/$/\&nbsp;/' $filePath/astats.txt       # append a blank
    sed -i "1i&nbsp;$savdate" $filePath/astats.txt
-   sed -i 's/$/<br>/' $filePath/astats.txt
+   cat $filePath/astats.txt > $filePath/templ.txt
 
-   #statcolor
+  while read line1; do
+      if [[ $line1 =~ "CST" ]]; then  # test ans save remailer date line
+         varM=$line1
+         continue
+      fi
+
+      if [[ $line1 =~ $remailerid1 && ! $remailerid1 == "" ]] || \
+         [[ $line1 =~ $remailerid2 && ! $remailerid2 == "" ]] || \
+         [[ $line1 =~ $remailerid3 && ! $remailerid3 == "" ]] || \
+         [[ $line1 =~ $remailerid4 && ! $remailerid4 == "" ]] || \
+         [[ $line1 =~ $remailerid5 && ! $remailerid5 == "" ]]; then
+         Surround $line1 "" "<font size=$fontsz color=^ff1493^><u>" "</u></font>"        # surround whole line (keyword="")
+      else
+         echo "$line1" >> $filePath/templ.txt2
+      fi
+
+   done< $filePath/templ.txt
+
+   sed -i "1i$varM" $filePath/templ.txt2  # restore remailer date line to 1st rec in file
+   sed -e 's/\^/\"/g' $filePath/templ.txt2 > $filePath/astats.txt
+   sed -i 's/$/<br>/' $filePath/astats.txt   # append <br>
 
    rm $filePath/templ.txt
+   rm $filePath/templ.txt2
 
    cat $filePath/astats.txt >> $webpgpath/$webpgnm
    echo "</font></td></tr></table>" >> $webpgpath/$webpgnm
@@ -539,16 +585,9 @@ for i in "${statarray[@]}"; do
    fi
 
 done
-
 ##'--------------------------'
 ##  END remailer stats table
 ##'--------------------------'
-
-##'--------------------------------------'
-##'--------------------------------------'
-##  END remailers stats horzontal tables
-##'--------------------------------------'
-##'--------------------------------------'
 
    echo "</font></td></tr></table><br>" >> $webpgpath/$webpgnm
 ##'--------------------------------------'
@@ -608,14 +647,12 @@ echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm  # BEGIN
 ##'----------------'
 
 
-
 echo "</td></tr></table>" >> $webpgpath/$webpgnm  # END
 ##'------------------------------------------'
 ##'------------------------------------------'
 ##  END pool & multiple web page hits tables
 ##'------------------------------------------'
 ##'------------------------------------------'
-
 
 
 echo "</body></html>" >> $webpgpath/$webpgnm
@@ -635,7 +672,5 @@ rm $filePath/temp21.txt
 
 exit 0
 
-# Lstats.sh
 
-```
 ```
