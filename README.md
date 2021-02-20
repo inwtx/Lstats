@@ -3,13 +3,12 @@
 This script can be used by a remailer sysops to monitor their mixmaster server and remailer performance.  
 Copy the script code below into a file called Lstats.sh and make it executable (sudo chmod 755 Lstats.sh).  
 Then execute it with a cron as explained in at the top of the script code.  
-The output can be accessed by: yourDN/Lstats.html
+The output can be accessed by: yourDN/Lstats.html  
+  
   
 <p align="left">
-  <img src="/images/lstats.png" width="1218" height="1615">
+  <img src="/images/lstats.png" width="1218" height="1530">
 </p>
-<br>
-  
   
 ```
 #!/bin/bash
