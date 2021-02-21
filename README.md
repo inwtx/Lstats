@@ -7,7 +7,7 @@ The output can be accessed by: yourDN/Lstats.html
   
   
 <p align="left">
-  <img src="/images/lstats.png" width="1218" height="1530">
+  <img src="/images/lstats.png" width="1218" height="1500">
 </p>
   
 ```
