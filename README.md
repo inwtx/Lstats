@@ -169,7 +169,7 @@ echo "<html><head><title>Server Stats</title></head><body bgcolor=\"$bgclr\" TEX
 ##'-------------------'
 ## BEGIN Top date line
 ##'-------------------'
-echo "<font face=\"Verdana\" size=$fontsz color=\"$fontcolor\"><b>&nbsp;" >> $webpgpath/$webpgnm
+echo "<font face=\"Verdana\" size=\"$fontsz\" color=\"$fontcolor\"><b>&nbsp;" >> $webpgpath/$webpgnm
 MLvar=$(date | awk '{print $0" "$2" "$3" "$6" "$4}' | awk '{print "("$1") "$7" "$8", "$9" &nbsp;&nbsp; "$10}')
 MLvar="${MLvar%:*} $(date | awk '{print $5}') &nbsp;&nbsp; ${0##*/}"
 echo "&nbsp;$MLvar" >> $webpgpath/$webpgnm
@@ -191,8 +191,8 @@ echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm
 ## BEGIN Machine table
 ##'-------------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<b><font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Machine</b></font></td></tr>
-<tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+<b><font face=\"Verdana\" color=\"$fontcl\" size=\"$fontsz\"><b>Machine</b></font></td></tr>
+<tr><td><font face=\"Courier New\" size=\"$fontsz\" color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 ## linux info
 echo "$(lsb_release -d) $(uname -m)<br>" | sed -e 's/Description://g' | tr -d "\t" >> $webpgpath/$webpgnm
@@ -285,8 +285,8 @@ echo "</td><td>" >> $webpgpath/$webpgnm  # MIDDLE: vertical divider between Mach
 ## BEGIN Netstats table
 ##'--------------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Netstats</b></font></td></tr>
-<tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+<font face=\"Verdana\" color=\"$fontcl\" size=\"$fontsz\"><b>Netstats</b></font></td></tr>
+<tr><td><font face=\"Courier New\" size=\"$fontsz\" color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 netstat -vatnp > $filePath/templ.txt
 
 sed -i "/tcp6/d" $filePath/templ.txt            # remove tcp6 lines
@@ -306,8 +306,8 @@ echo "</font></td></tr></table><br>" >> $webpgpath/$webpgnm
 ## BEGIN Free table
 ##'----------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Free</b></font></td></tr>
-<tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+<font face=\"Verdana\" color=\"$fontcl\" size=\"$fontsz\"><b>Free</b></font></td></tr>
+<tr><td><font face=\"Courier New\" size=\"$fontsz\" color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 free > $filePath/templ.txt
 sed -i 's/ /\&nbsp;/g' $filePath/templ.txt
@@ -338,8 +338,8 @@ echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm
 ## BEGIN 1st Mixmaster stats table
 ##'-------------------------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Mixmaster</b></font></td></tr>
-<tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+<font face=\"Verdana\" color=\"$fontcl\" size=\"$fontsz\"><b>Mixmaster</b></font></td></tr>
+<tr><td><font face=\"Courier New\" size=\"$fontsz\" color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 ## mailq
 echo "mailq count: " > $filePath/templ.txt
@@ -421,8 +421,8 @@ echo "</td><td>" >> $webpgpath/$webpgnm  # MIDDLE: vertical divider between 1st 
 ## BEGIN 2nd Mixmaster stats table
 ##'-------------------------------'
 echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-<font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Mixmaster</b></font></td></tr>
-<tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+<font face=\"Verdana\" color=\"$fontcl\" size=\"$fontsz\"><b>Mixmaster</b></font></td></tr>
+<tr><td><font face=\"Courier New\" size=\"$fontsz\" color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 ## top stats
 top -b -n1 > $filePath/templ.txt
@@ -498,8 +498,8 @@ echo "</td></tr></table>" >> $webpgpath/$webpgnm
 ##'-------------------------------'
 if [[ $(grep -c " Error: " $mixpath/error.log) -gt 0 ]] ; then
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-   <font face=\"Verdana\" size=$fontsz color="$fontcl" color=FF0000><b>Mix Errors</b></font></td></tr>
-   <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+   <font face=\"Verdana\" size=\"$fontsz\" color=\"$fontcl\" color=FF0000><b>Mix Errors</b></font></td></tr>
+   <tr><td><font face=\"Courier New\" size=\"$fontsz\" color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
    echo "(This error list will be removed only by clearing the error.log)" > $filePath/templ.txt
    grep " Error: " $mixpath/error.log >> $filePath/templ.txt
    sed -i 's/$/<br>/' $filePath/templ.txt   # add <br> to end of every rec
@@ -531,8 +531,8 @@ for i in "${statarray[@]}"; do
    ((varaLS++))
 
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-   <font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Remailer Statistics (${varLS##*;})</b></font></td></tr>
-   <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+   <font face=\"Verdana\" color=\"$fontcl\" size=\"$fontsz\"><b>Remailer Statistics (${varLS##*;})</b></font></td></tr>
+   <tr><td><font face=\"Courier New\" size=\"$fontsz\" color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
       if [[ $varaLS -eq 1 ]]; then  #  only pause at 1st stat download
          sleep 5                  #  pause on 1st stat collect for pingers to finish updating their stats
@@ -560,7 +560,7 @@ for i in "${statarray[@]}"; do
          [[ $line1 =~ $remailerid3 && ! $remailerid3 == "" ]] || \
          [[ $line1 =~ $remailerid4 && ! $remailerid4 == "" ]] || \
          [[ $line1 =~ $remailerid5 && ! $remailerid5 == "" ]]; then
-         Surround $line1 "" "<font size=$fontsz color=^ff1493^><u>" "</u></font>"        # surround whole line (keyword="")
+         Surround $line1 "" "<font size=\"$fontsz\" color=^ff1493^><u>" "</u></font>"        # surround whole line (keyword="")
       else
          echo "$line1" >> $filePath/templ.txt2
       fi
@@ -601,8 +601,8 @@ done
 vattest=$(mailq)
 if [[ ! $vattest = "Mail queue is empty" ]]; then
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-   <font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Mailq</b></font></td></tr>
-   <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+   <font face=\"Verdana\" color=\"$fontcl\" size=\"$fontsz\"><b>Mailq</b></font></td></tr>
+   <tr><td><font face=\"Courier New\" size=\"$fontsz\" color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
    echo "$vattest" | sort | uniq -c | sort -nk1 | awk '{$1=$1}1' | sed '/^.\{10,50\}$/!d' | grep -v "Request" > $filePath/templ.txt
    sed -e 's/$/<br>/' $filePath/templ.txt >> $webpgpath/$webpgnm
@@ -629,8 +629,8 @@ echo "<table><tr valign=\"top\"><td>" >> $webpgpath/$webpgnm  # BEGIN
 ## BEGIN pool table
 ##'----------------'
    echo "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\"><tr><td bgcolor=\"$titlecolor\">
-   <font face=\"Verdana\" color="$fontcl" size=$fontsz><b>Pool "-" $(find $mixpath/pool -type f | wc -l) "-" $(date +"%r")</font></td></tr>
-   <tr><td><font face=\"Courier New\" size=$fontsz color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
+   <font face=\"Verdana\" color=\"$fontcl\" size=\"$fontsz\"><b>Pool "-" $(find $mixpath/pool -type f | wc -l) "-" $(date +"%r")</font></td></tr>
+   <tr><td><font face=\"Courier New\" size=\"$fontsz\" color=\"$fontcolor\"><b>" >> $webpgpath/$webpgnm
 
 ## put count of each rec type here
    cat /dev/null > $filePath/templ.txt
