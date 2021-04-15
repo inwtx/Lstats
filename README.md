@@ -435,7 +435,11 @@ sed -e 's/$/<br>/' $filePath/templ.txt >> $webpgpath/$webpgnm  # append <br>
 echo "<br>" >> $webpgpath/$webpgnm
 
 ## start date/time
-echo "$(grep "mixmaster" <<< "$(ps -eo lstart,cmd)")" | awk '{print "Started: "$1" "$2" "$3" "$4}' >> $webpgpath/$webpgnm
+if [[ $(grep "mixmaster" <<< "$(ps -eo lstart,cmd)") == "" ]]; then
+   echo "<font color=FF0000><b>Started: mixmaster not running!</b></font>" >> $webpgpath/$webpgnm
+   else
+   echo "$(grep "mixmaster" <<< "$(ps -eo lstart,cmd)")" | awk '{print "Started: "$1" "$2" "$3" "$4}' >> $webpgpath/$webpgnm
+fi
 
 ## md5
 echo "<br>MD5: $(md5sum /usr/bin/mixmaster)" > $filePath/templ.txt
