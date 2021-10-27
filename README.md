@@ -438,7 +438,7 @@ echo "<br>" >> $webpgpath/$webpgnm
 if [[ $(grep "mixmaster" <<< "$(ps -eo lstart,cmd)") == "" ]]; then
    echo "<font color=FF0000><b>Started: mixmaster not running!</b></font>" >> $webpgpath/$webpgnm
    else
-   echo "$(grep "mixmaster" <<< "$(ps -eo lstart,cmd)")" | awk '{print "Started: "$1" "$2" "$3" "$4}' >> $webpgpath/$webpgnm
+   echo "$(grep "/usr/bin/mixmaster" <<< "$(ps -eo lstart,cmd)")" | awk '{print "Started: "$1" "$2" "$3" "$4}' >> $webpgpath/$webpgnm
 fi
 
 ## md5
